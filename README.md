@@ -8,6 +8,10 @@ The aim of the method is to mix two different concepts in a semantic manner to s
 ### Usage
 The method takes an image that provides the layout semantics and a prompt that provides the content semantics for the mixing process.
 
+There are 3 parameters for the method-
+- v: It is the interpolation constant used in the layout generation phase. The greater the value of v, the greater the influence of the prompt on the layout generation process.
+- kmax and kmin: These determine the range for the layout and content generation process. A higher value of kmax results in loss of more information about the layout of the original image and a higher value of kmin results in more steps for content generation process.
+
 ### Some examples reproduced from the paper:
 
 ##### Input Image:
