@@ -5,6 +5,9 @@ Implementation of [MagicMix: Semantic Mixing with Diffusion Models](https://arxi
 
 The aim of the method is to mix two different concepts in a semantic manner to synthesize a new concept while preserving the spatial layout and geometry.
 
+### Usage
+The method takes an image that provides the layout semantics and a prompt that provides the content semantics for the mixing process.
+
 ### Some examples reproduced from the paper:
 
 ##### Input Image:
