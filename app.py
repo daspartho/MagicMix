@@ -8,8 +8,8 @@ iface = gr.Interface(
     inputs=[
         gr.Image(shape=(512,512), type="pil"),
         gr.Text(),
-        gr.Slider(value=15),
-        gr.Slider(value=30),
+        gr.Slider(value=0.3,minimum=0, maximum=1, step=0.1),
+        gr.Slider(value=0.5,minimum=0, maximum=1, step=0.1),
         gr.Slider(value=0.5,minimum=0, maximum=1, step=0.1),
         gr.Number(value=42, maximum=2**64-1),
         gr.Slider(value=50),

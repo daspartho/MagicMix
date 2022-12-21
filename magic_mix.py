@@ -94,16 +94,16 @@ def prep_text(prompt):
 def magic_mix(
     img, # specifies the layout semantics
     prompt, # specifies the content semantics
-    kmin=15,
-    kmax=30,
+    kmin=0.3,
+    kmax=0.6,
     v=0.5, # interpolation constant
     seed=42,
     steps=50,
     guidance_scale=7.5,
 ):
 
-    tmin = steps-kmin
-    tmax = steps-kmax
+    tmin = steps- int(kmin*steps)
+    tmax = steps- int(kmax*steps)
 
     text_embeddings = prep_text(prompt)
 
