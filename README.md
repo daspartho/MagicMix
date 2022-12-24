@@ -1,4 +1,6 @@
 # MagicMix
+[![Generic badge](https://img.shields.io/badge/🤗-Open%20in%20Spaces-blue.svg)](https://huggingface.co/spaces/daspartho/MagicMix)
+
 Implementation of [MagicMix: Semantic Mixing with Diffusion Models](https://arxiv.org/pdf/2210.16056.pdf) paper.
 
 ![magicmix](https://user-images.githubusercontent.com/59410571/206903603-6c8da6ef-69c4-4400-b4a3-aef9206ff396.png)
