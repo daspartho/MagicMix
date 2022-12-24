@@ -169,3 +169,34 @@ def magic_mix(
             latents = scheduler.step(pred, t, latents).prev_sample
 
     return decode(latents)
+
+if __name__ == "__main__":
+
+    import argparse
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("img_file", type=str, help="image file to provide the layout semantics for the mixing process")
+    parser.add_argument("prompt", type=str, help="prompt to provide the content semantics for the mixing process")
+    parser.add_argument("out_file", type=str, help="filename to save the generation to")
+    parser.add_argument("--kmin", type=float, default=0.3)
+    parser.add_argument("--kmax", type=float, default=0.6)
+    parser.add_argument("--v", type=float, default=0.5)
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--steps", type=int, default=50)
+    parser.add_argument("--guidance_scale", type=float, default=7.5)
+
+    args = parser.parse_args()
+
+    img = Image.open(args.img_file)
+    out_img = magic_mix(
+        img, 
+        args.prompt,
+        args.kmin,
+        args.kmax,
+        args.v,
+        args.seed,
+        args.steps,
+        args.guidance_scale
+        )
+    out_img.save(args.out_file)
