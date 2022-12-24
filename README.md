@@ -8,8 +8,8 @@ The aim of the method is to mix two different concepts in a semantic manner to s
 The method takes an image that provides the layout semantics and a prompt that provides the content semantics for the mixing process.
 
 There are 3 parameters for the method-
-- v: It is the interpolation constant used in the layout generation phase. The greater the value of v, the greater the influence of the prompt on the layout generation process.
-- kmax and kmin: These determine the range for the layout and content generation process. A higher value of kmax results in loss of more information about the layout of the original image and a higher value of kmin results in more steps for content generation process.
+- `v`: It is the interpolation constant used in the layout generation phase. The greater the value of v, the greater the influence of the prompt on the layout generation process.
+- `kmax` and `kmin`: These determine the range for the layout and content generation process. A higher value of kmax results in loss of more information about the layout of the original image and a higher value of kmin results in more steps for content generation process.
 
 ### Usage
 
@@ -33,7 +33,7 @@ python3 magic_mix.py \
     --seed 42 \
     --guidance_scale 7.5
 ```
-Also, check out the [demo notebook](https://github.com/daspartho/MagicMix/blob/main/demo.ipynb) for example usage of the implementation.
+Also, check out the [demo notebook](https://github.com/daspartho/MagicMix/blob/main/demo.ipynb) for example usage of the implementation to reproduce examples from the paper.
 
 ### Some examples reproduced from the paper:
 
@@ -78,4 +78,4 @@ Also, check out the [demo notebook](https://github.com/daspartho/MagicMix/blob/m
 ![pineapple-cake](https://user-images.githubusercontent.com/59410571/206903377-3b0fb63c-061e-4070-a8d1-eaca5738ae36.jpg)
 
 ### Note
-I'm not the author of the paper, and this is not an official implementation
+**I'm not the author of the paper, and this is not an official implementation**
