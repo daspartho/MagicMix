@@ -5,12 +5,35 @@ Implementation of [MagicMix: Semantic Mixing with Diffusion Models](https://arxi
 
 The aim of the method is to mix two different concepts in a semantic manner to synthesize a new concept while preserving the spatial layout and geometry.
 
-### Usage
 The method takes an image that provides the layout semantics and a prompt that provides the content semantics for the mixing process.
 
 There are 3 parameters for the method-
 - v: It is the interpolation constant used in the layout generation phase. The greater the value of v, the greater the influence of the prompt on the layout generation process.
 - kmax and kmin: These determine the range for the layout and content generation process. A higher value of kmax results in loss of more information about the layout of the original image and a higher value of kmin results in more steps for content generation process.
+
+### Usage
+
+```python
+from PIL import Image
+from magic_mix import magic_mix
+
+img = Image.open('phone.jpg')
+out_img = magic_mix(img, 'bed', kmax=0.5)
+out_img.save("mix.jpg")
+```
+```
+python3 magic_mix.py \
+    "phone.jpg" \
+    "bed" \
+    "mix.jpg" \
+    --kmin 0.3 \
+    --kmax 0.6 \
+    --v 0.5 \
+    --steps 50 \
+    --seed 42 \
+    --guidance_scale 7.5
+```
+Also, check out the [demo notebook](https://github.com/daspartho/MagicMix/blob/main/demo.ipynb) for example usage of the implementation.
 
 ### Some examples reproduced from the paper:
 
