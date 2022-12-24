@@ -3,7 +3,7 @@ from magic_mix import magic_mix
 
 iface = gr.Interface(
     description = "Implementation of MagicMix: Semantic Mixing with Diffusion Models paper",
-    article = "Github",
+    article = "<p style='text-align: center'><a href='https://github.com/daspartho/MagicMix' target='_blank'>Github</a></p>",
     fn=magic_mix, 
     inputs=[
         gr.Image(shape=(512,512), type="pil"),
