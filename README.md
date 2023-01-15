@@ -37,6 +37,29 @@ python3 magic_mix.py \
 ```
 Also, check out the [demo notebook](https://github.com/daspartho/MagicMix/blob/main/demo.ipynb) for example usage of the implementation to reproduce examples from the paper.
 
+You can also use the community pipeline on the diffusers libary.
+
+```python
+from diffusers import DiffusionPipeline, DDIMScheduler
+from PIL import Image
+
+pipe = DiffusionPipeline.from_pretrained(
+    "CompVis/stable-diffusion-v1-4",
+    custom_pipeline="magic_mix",
+    scheduler = DDIMScheduler.from_pretrained("CompVis/stable-diffusion-v1-4", subfolder="scheduler"),
+).to('cuda')
+
+img = Image.open('phone.jpg')
+mix_img = pipe(
+    img, 
+    prompt = 'bed', 
+    kmin = 0.3,
+    kmax = 0.5,
+    mix_factor = 0.5,
+    )
+mix_img.save('mix.jpg')
+```
+
 ### Some examples reproduced from the paper:
 
 ##### Input Image:
