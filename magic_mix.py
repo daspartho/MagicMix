@@ -23,21 +23,21 @@ text_encoder = CLIPTextModel.from_pretrained(
 
 vae = AutoencoderKL.from_pretrained(
     "CompVis/stable-diffusion-v1-4",
-    subfolder = "vae",
+    subfolder="vae",
 ).to(device)
 
 unet = UNet2DConditionModel.from_pretrained(
     "CompVis/stable-diffusion-v1-4",
-    subfolder = "unet",
+    subfolder="unet",
 ).to(device)
 
-beta_start,beta_end = 0.00085,0.012
+beta_start, beta_end = 0.00085, 0.012
 scheduler = DDIMScheduler(
     beta_start=beta_start,
     beta_end=beta_end,
     beta_schedule="scaled_linear",
     num_train_timesteps=1000,
-    clip_sample=False, 
+    clip_sample=False,
     set_alpha_to_one=False,
 )
 
@@ -45,7 +45,7 @@ scheduler = DDIMScheduler(
 # convert PIL image to latents
 def encode(img):
     with torch.no_grad():
-        latent = vae.encode(tfms.ToTensor()(img).unsqueeze(0).to(device)*2-1)
+        latent = vae.encode(tfms.ToTensor()(img).unsqueeze(0).to(device) * 2 - 1)
         latent = 0.18215 * latent.latent_dist.sample()
     return latent
 
@@ -63,7 +63,6 @@ def decode(latent):
 
 # convert prompt into text embeddings, also unconditional embeddings
 def prep_text(prompt):
-
     text_input = tokenizer(
         prompt,
         padding="max_length",
@@ -72,9 +71,7 @@ def prep_text(prompt):
         return_tensors="pt",
     )
 
-    text_embedding = text_encoder(
-        text_input.input_ids.to(device)
-    )[0]
+    text_embedding = text_encoder(text_input.input_ids.to(device))[0]
 
     uncond_input = tokenizer(
         "",
@@ -84,26 +81,23 @@ def prep_text(prompt):
         return_tensors="pt",
     )
 
-    uncond_embedding = text_encoder(
-        uncond_input.input_ids.to(device)
-    )[0]
+    uncond_embedding = text_encoder(uncond_input.input_ids.to(device))[0]
 
     return torch.cat([uncond_embedding, text_embedding])
 
 
 def magic_mix(
-    img, # specifies the layout semantics
-    prompt, # specifies the content semantics
+    img,  # specifies the layout semantics
+    prompt,  # specifies the content semantics
     kmin=0.3,
     kmax=0.6,
-    v=0.5, # interpolation constant
+    v=0.5,  # interpolation constant
     seed=42,
     steps=50,
     guidance_scale=7.5,
 ):
-
-    tmin = steps- int(kmin*steps)
-    tmax = steps- int(kmax*steps)
+    tmin = steps - int(kmin * steps)
+    tmax = steps - int(kmax * steps)
 
     text_embeddings = prep_text(prompt)
 
@@ -114,22 +108,18 @@ def magic_mix(
 
     torch.manual_seed(seed)
     noise = torch.randn(
-        (1,unet.in_channels,height // 8,width // 8),
+        (1, unet.in_channels, height // 8, width // 8),
     ).to(device)
 
-    latents = scheduler.add_noise(
-        encoded, 
-        noise, 
-        timesteps=scheduler.timesteps[tmax]
-    )
+    latents = scheduler.add_noise(encoded, noise, timesteps=scheduler.timesteps[tmax])
 
-    input = torch.cat([latents]*2)
-                
+    input = torch.cat([latents] * 2)
+
     input = scheduler.scale_model_input(input, scheduler.timesteps[tmax])
 
     with torch.no_grad():
         pred = unet(
-            input, 
+            input,
             scheduler.timesteps[tmax],
             encoder_hidden_states=text_embeddings,
         ).sample
@@ -141,24 +131,22 @@ def magic_mix(
 
     for i, t in enumerate(tqdm(scheduler.timesteps)):
         if i > tmax:
-            if i < tmin: # layout generation phase
-                orig_latents = scheduler.add_noise(
-                    encoded, 
-                    noise, 
-                    timesteps=t
-                )
-                
-                input = (v*latents) + (1-v)*orig_latents # interpolating between layout noise and conditionally generated noise to preserve layout sematics
-                input = torch.cat([input]*2)
+            if i < tmin:  # layout generation phase
+                orig_latents = scheduler.add_noise(encoded, noise, timesteps=t)
 
-            else: # content generation phase
-                input = torch.cat([latents]*2)
-                
+                input = (v * latents) + (
+                    1 - v
+                ) * orig_latents  # interpolating between layout noise and conditionally generated noise to preserve layout sematics
+                input = torch.cat([input] * 2)
+
+            else:  # content generation phase
+                input = torch.cat([latents] * 2)
+
             input = scheduler.scale_model_input(input, t)
 
             with torch.no_grad():
                 pred = unet(
-                    input, 
+                    input,
                     t,
                     encoder_hidden_states=text_embeddings,
                 ).sample
@@ -170,14 +158,22 @@ def magic_mix(
 
     return decode(latents)
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("img_file", type=str, help="image file to provide the layout semantics for the mixing process")
-    parser.add_argument("prompt", type=str, help="prompt to provide the content semantics for the mixing process")
+    parser.add_argument(
+        "img_file",
+        type=str,
+        help="image file to provide the layout semantics for the mixing process",
+    )
+    parser.add_argument(
+        "prompt",
+        type=str,
+        help="prompt to provide the content semantics for the mixing process",
+    )
     parser.add_argument("out_file", type=str, help="filename to save the generation to")
     parser.add_argument("--kmin", type=float, default=0.3)
     parser.add_argument("--kmax", type=float, default=0.6)
@@ -190,13 +186,13 @@ if __name__ == "__main__":
 
     img = Image.open(args.img_file)
     out_img = magic_mix(
-        img, 
+        img,
         args.prompt,
         args.kmin,
         args.kmax,
         args.v,
         args.seed,
         args.steps,
-        args.guidance_scale
-        )
+        args.guidance_scale,
+    )
     out_img.save(args.out_file)
